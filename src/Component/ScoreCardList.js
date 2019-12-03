@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import * as PXBColors from '@pxblue/colors';
-import {ScoreCard} from 'common-ui-library';
+import { ScoreCard } from 'common-ui-library';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Banner from '../Component/Banner'
@@ -140,11 +140,100 @@ class CardList extends Component {
         this.setState({ data: sampleData });
     }
 
+    addBanner(classes, data) {
+        return (
+            <div className={classes.bannerdetails}>
+
+                <Banner style={classes.herobanner}>
+                    {
+                        Object.keys(data.values).map((item) => {
+                            let label, icons, units;
+                            if (item === 'humidity') {
+                                icons = moisture
+                                label = 'Humidity'
+                                units = '%'
+                            } else if (item === 'flow') {
+                                icons = flow
+                                label = 'Flow'
+                                units = 'KSCFH'
+                            } if (item === 'temperature') {
+                                icons = temperature
+                                label = 'Temperature'
+                                units = '\u2109'
+                            } if (item === 'volume') {
+                                icons = gascylinder
+                                label = 'Volume'
+                                units = 'KSCF'
+                            }
+
+                            return (
+                                <Badge
+                                    icon={<img src={icons} alt="" />}
+                                    label={label}
+                                    value={data.values[item] || 0}
+                                    units={units}
+                                    styleValue={classes.listvalues}
+                                    styleUnits={classes.listvalues}
+                                    styleLabel={classes.listtext}
+                                />
+                            )
+                        })
+                    }
+                </Banner>
+
+            </div>
+        )
+    }
+
+    addChildren(classes, data) {
+        return (
+            <div className={classes.listdetails}>
+                <List >
+                    <ListItems
+                        containerStyle={classes.listitem}
+                        iconStyle={classes.listitemicon}
+                        iconComponent={() => {
+                            return (
+                                <NotificationsActiveIcon />
+                            )
+                        }}
+                        textPrimaryStyle={data.alarmCount > 0 ? classes.listbluetext : classes.listtext}
+                        textContainerStyle={data.alarmCount > 0 ? classes.listitemtext : classes.listitemtext}
+                        primary={data.alarmCount ? data.alarmCount > 1 ? data.alarmCount + ' Alarms' : data.alarmCount + ' Alarm' : '0 Alarm'}
+                    />
+                    <ListItems
+                        containerStyle={classes.listitem}
+                        iconStyle={classes.listitemicon}
+                        iconComponent={() => {
+                            return (
+                                <CloudCircleIcon />
+                            )
+                        }}
+                        textPrimaryStyle={data.eventCount > 0 ? classes.listbluetext : classes.listtext}
+                        textContainerStyle={data.eventCount > 0 ? classes.listitemtext : classes.listitemtext}
+                        primary={data.eventCount ? data.eventCount > 1 ? data.eventCount + ' Events' : data.eventCount + ' Event' : '0 Event'}
+                    />
+                    <ListItems
+                        containerStyle={classes.listitem}
+                        iconStyle={classes.listitemicon}
+                        iconComponent={() => {
+                            return (
+                                <InfoIcon />
+                            )
+                        }}
+                        textPrimaryStyle={classes.listtext}
+                        textContainerStyle={classes.listitemtext}
+                        primary={data.commStatus}
+                    />
+                </List>
+            </div>
+        )
+    }
 
 
     render() {
         const { classes } = this.props;
-        console.log('render',this.state)
+        console.log('render', this.state)
         return (
             <React.Fragment>
                 <Grid container style={{ padding: 10 }} spacing={2}>
@@ -163,46 +252,7 @@ class CardList extends Component {
                                 }
                                 badgeOffset={-10}
                                 badge={
-                                    <div className={classes.bannerdetails}>
-
-                                      <Banner style={classes.herobanner}>
-                                       {
-                                           Object.keys(data.values).map((item) => {
-                                            let label, icons, units;
-                                            if (item === 'humidity') {
-                                                icons = moisture
-                                                label = 'Humidity'
-                                                units = '%'
-                                            } else if (item === 'flow') {
-                                                icons = flow
-                                                label = 'Flow'
-                                                units = 'KSCFH'
-                                            } if (item === 'temperature') {
-                                                icons = temperature
-                                                label = 'Temperature'
-                                                units = '\u2109'
-                                            } if (item === 'volume') {
-                                                icons = gascylinder
-                                                label = 'Volume'
-                                                units = 'KSCF'
-                                            }
-
-                                            return (
-                                                <Badge
-                                                    icon={<img src={icons} alt="" />}
-                                                    label={label}
-                                                    value={data.values[item] || 0}
-                                                    units={units}
-                                                    styleValue={classes.listvalues}
-                                                    styleUnits={classes.listvalues}
-                                                    styleLabel={classes.listtext}
-                                                />
-                                            )
-                                        })
-                                       }
-                                      </Banner>
-
-                                    </div>
+                                    this.addBanner(classes, data)
                                 }
                                 actionRow={
                                     <div>
@@ -212,46 +262,7 @@ class CardList extends Component {
                                         />
                                     </div>
                                 }>
-                                <div className={classes.listdetails}>
-                                    <List >
-                                        <ListItems 
-                                            containerStyle={classes.listitem}
-                                            iconStyle={classes.listitemicon}
-                                            iconComponent={()=>{
-                                                return(
-                                                    <NotificationsActiveIcon />
-                                                )
-                                            }}
-                                            textPrimaryStyle={data.alarmCount  > 0?classes.listbluetext:classes.listtext}
-                                            textContainerStyle={data.alarmCount > 0?classes.listitemtext:classes.listitemtext}
-                                            primary={data.alarmCount?data.alarmCount>1?data.alarmCount+' Alarms':data.alarmCount+' Alarm':'0 Alarm'}
-                                        />
-                                        <ListItems 
-                                            containerStyle={classes.listitem}
-                                            iconStyle={classes.listitemicon}
-                                            iconComponent={()=>{
-                                                return(
-                                                    <CloudCircleIcon />
-                                                )
-                                            }}
-                                            textPrimaryStyle={data.eventCount > 0?classes.listbluetext:classes.listtext}
-                                            textContainerStyle={data.eventCount > 0?classes.listitemtext:classes.listitemtext}
-                                            primary={data.eventCount?data.eventCount>1?data.eventCount+' Events':data.eventCount+' Event':'0 Event'}
-                                        />
-                                        <ListItems 
-                                            containerStyle={classes.listitem}
-                                            iconStyle={classes.listitemicon}
-                                            iconComponent={()=>{
-                                                return(
-                                                    <InfoIcon />
-                                                )
-                                            }}
-                                            textPrimaryStyle={classes.listtext}
-                                            textContainerStyle={classes.listitemtext}
-                                            primary={data.commStatus}
-                                        />
-                                    </List>
-                                </div>
+                                {this.addChildren(classes, data)}
                             </ScoreCard>
                         </Grid>
                     ))
